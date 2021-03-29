@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lsq.search.mapper.UserMapper">
+    <resultMap id="userResultMap" type="User">
+        <id property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="vip" column="vip"/>
+        <result property="icon" column="icon"/>
+        <result property="email" column="email"/>
+    </resultMap>
+    
+    <select id="getUserList" resultMap="userResultMap">
+        select * from user;
+    </select>
+
+    <select id="getUserByName" resultMap="userResultMap">
+        select *
+        from user
+        where username = #{username}
+    </select>
+    
+    <insert id="insertUser" parameterType="User" useGeneratedKeys="true" keyProperty="id">
+        insert into user(username,password,vip,icon,email)
+        values (#{username},#{password},#{vip},#{icon},#{email})
+    </insert>
+
+    <update id="changePwd" >
+        update user
+        set password = #{newpassword}
+        where username = #{username}
+    </update>
+
+<!--更新除密码其他信息-->
+    <update id="updateUser">
+        update user
+        <set>
+            <if test="icon != null">
+            icon = #{icon},
+            </if>
+            <if test="vip != null">
+                vip = #{vip},
+            </if>
+            <if test="icon != null">
+                icon = #{icon}
+            </if>
+            <if test="email != null">
+                email = #{email}
+            </if>
+        </set>
+        where username = #{username}
+    </update>
+
+    <delete id="deleteUser">
+        delete
+        from user
+        where username = #{username}
+    </delete>
+</mapper>
