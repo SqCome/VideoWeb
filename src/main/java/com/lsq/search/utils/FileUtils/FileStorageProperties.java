@@ -1,4 +1,4 @@
-package com.lsq.search.utils.videoUtils;
+package com.lsq.search.utils.FileUtils;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;

@@ -1,6 +1,9 @@
 package com.lsq.search.contraller;
 
 
+import com.lsq.search.entity.User;
+import com.lsq.search.mapper.UserMapper;
+import com.lsq.search.service.UserService;
 import com.lsq.search.utils.UploadFileResponse;
 import com.lsq.search.service.FileStorageService;
 import org.slf4j.Logger;
@@ -25,38 +28,51 @@ public class FileController {
     private static final Logger logger = LoggerFactory.getLogger(FileController.class);
 
     @Autowired
+    private User user;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
     private FileStorageService fileStorageService;
+
+    @Autowired
+    private UserMapper userMapper;
 
 
     private UploadFileResponse uploadFileResponse;
 
-    @PostMapping("/uploadFile")
-    public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file) {
-        String fileName = fileStorageService.storeFile(file);
+//    @PostMapping("/uploadVideo")
+//    public UploadFileResponse uploadFile(@RequestParam("video") MultipartFile file,@RequestParam("userName") String username) {
+//
+//        String targetLocation = userService.getLocation(username);
+//
+//        String fileName = fileStorageService.storeFile(file,targetLocation);
+//
+//        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+//                .path("/downloadFile/")
+//                .path(fileName)
+//                .toUriString();
+//        uploadFileResponse = new UploadFileResponse();
+//        uploadFileResponse.setAll(fileName,fileDownloadUri,
+//                file.getContentType(), file.getSize());
+//
+//        return uploadFileResponse;
+//    }
 
-        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/downloadFile/")
-                .path(fileName)
-                .toUriString();
-        uploadFileResponse = new UploadFileResponse();
-        uploadFileResponse.setAll(fileName,fileDownloadUri,
-                file.getContentType(), file.getSize());
-
-        return uploadFileResponse;
-    }
-
-    @PostMapping("/uploadMultipleFiles")
-    public List<UploadFileResponse> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files) {
-        return Arrays.asList(files)
-                .stream()
-                .map(file -> uploadFile(file))
-                .collect(Collectors.toList());
-    }
+//    @PostMapping("/uploadMultipleFiles")
+//    public List<UploadFileResponse> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files) {
+//        return Arrays.asList(files)
+//                .stream()
+//                .map(file -> uploadFile(file,"aa"))
+//                .collect(Collectors.toList());
+//    }
 
     @GetMapping("/downloadFile/{fileName:.+}")
-    public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, HttpServletRequest request) {
+    public ResponseEntity<Resource> downloadFile(@PathVariable String fileName,@RequestParam(value = "userName") String userName , HttpServletRequest request) {
+        user = userMapper.getUserByName(userName);
         // Load file as Resource
-        Resource resource = fileStorageService.loadFileAsResource(fileName);
+        Resource resource = fileStorageService.loadFileAsResource(fileName,user,"Video");
 
         // Try to determine file's content type
         String contentType = null;

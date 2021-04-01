@@ -1,14 +1,14 @@
 package com.lsq.search.serviceimpl;
 
+import com.lsq.search.entity.User;
 import com.lsq.search.exception.FileStorageException;
 import com.lsq.search.exception.MyFileNotFoundException;
 import com.lsq.search.service.FileStorageService;
-import com.lsq.search.utils.videoUtils.FileStorageProperties;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -25,23 +25,12 @@ import java.nio.file.StandardCopyOption;
  * @Auth LSQ
  */
 
+@CrossOrigin
 @Service
 public class FileStorageServiceImpl implements FileStorageService {
-        private final Path fileStorageLocation;
 
-        @Autowired
-        public FileStorageServiceImpl(FileStorageProperties fileStorageProperties) {
-            //get方法返回的是Path对象，
-            this.fileStorageLocation = Paths.get(fileStorageProperties.getUploadDir())
-                    .toAbsolutePath().normalize();
-            try {
-                Files.createDirectories(this.fileStorageLocation);
-            } catch (Exception ex) {
-                throw new FileStorageException("Could not create the directory where the uploaded files will be stored.", ex);
-            }
-        }
-
-        public String storeFile(MultipartFile file) {
+        @Override
+        public String storeFile(MultipartFile file,User user,String fileType) {
             // Normalize file name
             String fileName = StringUtils.cleanPath(file.getOriginalFilename());
 
@@ -52,7 +41,7 @@ public class FileStorageServiceImpl implements FileStorageService {
                 }
 
                 // Copy file to the target location (Replacing existing file with the same name)
-                Path targetLocation = this.fileStorageLocation.resolve(fileName);
+                Path targetLocation = Paths.get(user.getTargetLocation(),fileType).resolve(fileName);
                 Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
                 return fileName;
@@ -61,9 +50,10 @@ public class FileStorageServiceImpl implements FileStorageService {
             }
         }
 
-        public Resource loadFileAsResource(String fileName) {
+        @Override
+        public Resource loadFileAsResource(String fileName,User user,String fileType) {
             try {
-                Path filePath = this.fileStorageLocation.resolve(fileName).normalize();
+                Path filePath = Paths.get(user.getTargetLocation(),fileType).resolve(fileName).normalize();
                 Resource resource = new UrlResource(filePath.toUri());
                 if(resource.exists()) {
                     return resource;

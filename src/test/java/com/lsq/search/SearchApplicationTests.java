@@ -23,10 +23,7 @@ class SearchApplicationTests {
 
     @Test
     void contextLoads() {
-        user.setUsername("beauty");
-        user.setEmail("POP@lsq.com");
-        int i = userMapper.updateUser(user);
-        System.out.println(i);
+        user = userMapper.getUserByName("LSQ");
         System.out.println(user);
     }
 

@@ -7,7 +7,7 @@ public enum SignUpCheck {
     /**
      *
      */
-    ERROR(-1,"服务器异常"),SUCCESSS(0,"操作成功"),NAME_REPEAT(1,"用户名已存在"),
+    ERROR(-1,"服务器异常"),SUCCESS(0,"操作成功"),NAME_REPEAT(1,"用户名已存在"),
     NAME_NOT_EXIT(2,"用户名不存在"),PASSWORD_ERROR(3,"密码错误");
 
     private final int infoIntValue;

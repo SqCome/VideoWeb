@@ -1,5 +1,6 @@
 package com.lsq.search.service;
 
+import com.lsq.search.entity.User;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -11,6 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public interface FileStorageService {
 
-    public String storeFile(MultipartFile file);
-    public Resource loadFileAsResource(String fileName);
+    public String storeFile(MultipartFile file,User user,String fileType);
+    public Resource loadFileAsResource(String fileName,User user,String fileType);
 }

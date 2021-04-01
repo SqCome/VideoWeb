@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="VideoMapper">
+    <resultMap id="videoResultMap" type="Video">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="url" column="url"/>
+        <result property="title" column="title"/>
+        <result property="commentNum" column="comment_num"/>
+        <result property="likedNum" column="like_num"/>
+        <result property="reviewStatus" column="review_status"/>
+        <result property="showStatus" column="show_status"/>
+     </resultMap>
+
+
+    <!--根据视频id来查询相应的视频资源    -->
+    <select id="selectVideoById" resultMap="videoResultMap">
+        select *
+        from video
+        where id = #{id}
+    </select>
+    
+    <!--查询用户名下的所有信息    -->
+    <select id="selectVideosByUser" resultMap="">
+        
+    </select>
+    
+    <!--插入视频资源信息    -->
+    <insert id="insertVideo" parameterType="Video" useGeneratedKeys="true" keyProperty="id">
+        insert into video(user_id,url,title)
+        values (#{userId},#{url},#{title})
+    </insert>
+
+    <!--更新视频资源信息    -->
+    <update id="updateVideo">
+        update video
+        <set>
+            <if test="title != null">
+                title = #{title},
+            </if>
+            <if test="commentNum != null">
+                comment_num = #{commentNum}
+            </if>
+            <if test="likedNum != null">
+                like_num = #{likedNum}
+            </if>
+        </set>
+    </update>
+</mapper>

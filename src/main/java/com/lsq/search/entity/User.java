@@ -1,7 +1,8 @@
 package com.lsq.search.entity;
 
 import org.springframework.stereotype.Repository;
-import javax.persistence.Entity;
+
+import java.util.List;
 
 
 @Repository
@@ -12,9 +13,20 @@ public class User {
     private boolean vip;
     private String icon;
     private String email;
+    private String targetLocation;
+    private List<Video> videoList;
+
 
     public boolean isVip() {
         return vip;
+    }
+
+    public String getTargetLocation() {
+        return targetLocation;
+    }
+
+    public void setTargetLocation(String targetLocation) {
+        this.targetLocation = targetLocation;
     }
 
     public void setVip(boolean vip) {
@@ -61,6 +73,14 @@ public class User {
         this.password = password;
     }
 
+    public List<Video> getVideoList() {
+        return videoList;
+    }
+
+    public void setVideoList(List<Video> videoList) {
+        this.videoList = videoList;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -70,6 +90,8 @@ public class User {
                 ", vip=" + vip +
                 ", icon='" + icon + '\'' +
                 ", email='" + email + '\'' +
+                ", targetLocation='" + targetLocation + '\'' +
+                ", videoList=" + videoList +
                 '}';
     }
 }

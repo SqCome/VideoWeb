@@ -13,5 +13,6 @@
         <typeAlias alias="User" type="com.lsq.search.entity.User"/>
         <typeAlias alias="Video" type="com.lsq.search.entity.Video"/>
         <typeAlias alias="UserMapper" type="com.lsq.search.mapper.UserMapper"/>
+        <typeAlias alias="VideoMapper" type="com.lsq.search.mapper.VideoMapper" />
     </typeAliases>
 </configuration>

@@ -4,22 +4,43 @@ package com.lsq.search.serviceimpl;
 import com.lsq.search.entity.ResEntity;
 import com.lsq.search.entity.User;
 import com.lsq.search.mapper.UserMapper;
+import com.lsq.search.service.FileStorageService;
 import com.lsq.search.service.UserService;
 import com.lsq.search.utils.ResCode;
 import com.lsq.search.utils.SignUpCheck;
+import com.lsq.search.utils.FileUtils.FileStorageProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.core.io.Resource;
 
-import javax.annotation.Resource;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @Service("userService")
 public class UserServiceImpl implements UserService {
 
-    @Resource
+    private final Path fileStorageLocation;
+
+    @Autowired
     private UserMapper userMapper;
 
-    @Resource
+    @Autowired
     private User checkUser;
+
+    @Autowired
+    private FileStorageService fileStorageService;
+
+
+    @Autowired
+    public UserServiceImpl(FileStorageProperties fileStorageProperties) {
+        this.fileStorageLocation = Paths.get(fileStorageProperties.getUploadDir())
+                                    .toAbsolutePath().normalize();
+    }
 
 
     @Override
@@ -38,6 +59,12 @@ public class UserServiceImpl implements UserService {
     public ResEntity insertUserService(User user){
         ResEntity resEntity = new ResEntity();
         try {
+            Path myLocation = this.fileStorageLocation.resolve(Paths.get(user.getUsername()));
+            Path myIcon = myLocation.resolve(Paths.get("Icon"));
+            Path myVideo = myLocation.resolve(Paths.get("Video"));
+            user.setTargetLocation(myLocation.toString());
+            Files.createDirectories(myIcon);
+            Files.createDirectories(myVideo);
             if (userMapper.getUserByName(user.getUsername()) != null ){
                 resEntity.setCode(ResCode.WARN.getCode());
                 resEntity.setMessage(ResCode.WARN.getMsg());
@@ -46,12 +73,13 @@ public class UserServiceImpl implements UserService {
                 userMapper.insertUser(user);
                 resEntity.setCode(ResCode.SUCCESS.getCode());
                 resEntity.setMessage(ResCode.SUCCESS.getMsg());
-                resEntity.setData(SignUpCheck.SUCCESSS);
+                resEntity.setData(SignUpCheck.SUCCESS);
             }
             return resEntity;
         }catch (Exception e){
             resEntity.setCode(ResCode.ERROR.getCode());
             resEntity.setMessage(ResCode.ERROR.getMsg());
+            resEntity.setData(e);
             return resEntity;
         }
 
@@ -71,7 +99,7 @@ public class UserServiceImpl implements UserService {
                 if (checkUser.getPassword().equals(user.getPassword())){  //密码正确
                     resEntity.setCode(ResCode.SUCCESS.getCode());
                     resEntity.setMessage(ResCode.SUCCESS.getMsg());
-                    resEntity.setData(SignUpCheck.SUCCESSS);
+                    resEntity.setData(SignUpCheck.SUCCESS);
                 }else {  //密码不正确
                     resEntity.setCode(ResCode.WARN.getCode());
                     resEntity.setMessage(ResCode.WARN.getMsg());
@@ -106,7 +134,7 @@ public class UserServiceImpl implements UserService {
                     userMapper.changePwd(user.getUsername(),newpassword);
                     resEntity.setCode(ResCode.SUCCESS.getCode());
                     resEntity.setMessage(ResCode.SUCCESS.getMsg());
-                    resEntity.setData(SignUpCheck.SUCCESSS);
+                    resEntity.setData(SignUpCheck.SUCCESS);
                 }else {  //旧密码不正确
                     resEntity.setCode(ResCode.WARN.getCode());
                     resEntity.setMessage(ResCode.WARN.getMsg());
@@ -140,7 +168,7 @@ public class UserServiceImpl implements UserService {
                 userMapper.deleteUser(user);
                 resEntity.setCode(ResCode.SUCCESS.getCode());
                 resEntity.setMessage(ResCode.SUCCESS.getMsg());
-                resEntity.setData(SignUpCheck.SUCCESSS);
+                resEntity.setData(SignUpCheck.SUCCESS);
             }else{   //核验密码不通过
                 resEntity.setCode(ResCode.WARN.getCode());
                 resEntity.setMessage(ResCode.WARN.getMsg());
@@ -156,10 +184,69 @@ public class UserServiceImpl implements UserService {
     }
 
 
-
+    /**
+     * 修改信息
+     * @param user
+     * @return
+     */
     @Override
     public ResEntity changeInfo(User user) {
+        ResEntity resEntity = new ResEntity();
+        try {
+            userMapper.updateUser(user);
+            resEntity.setCode(ResCode.SUCCESS.getCode());
+            resEntity.setMessage(ResCode.SUCCESS.getMsg());
+            resEntity.setData("修改成功！");
+            return resEntity;
+        }catch (Exception e){
+            resEntity.setCode(ResCode.ERROR.getCode());
+            resEntity.setMessage(ResCode.ERROR.getMsg());
+            resEntity.setData("修改失败！");
+            System.out.println(e);
+            return resEntity;
+        }
 
-        return null;
+
+
+    }
+
+    /**
+     * 上传头像
+     * @param user
+     * @return
+     */
+    @Override
+    public ResEntity uploadIcon(User user, MultipartFile file) {
+        ResEntity resEntity = new ResEntity();
+        try {
+            String fileName = fileStorageService.storeFile(file,user,"Icon");
+            String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+                    .path("/downloadFile/")
+                    .path(fileName)
+                    .toUriString();
+            user.setIcon(fileDownloadUri);
+            this.changeInfo(user);
+            resEntity.setCode(ResCode.SUCCESS.getCode());
+            resEntity.setMessage(ResCode.SUCCESS.getMsg());
+            resEntity.setData("上传成功！");
+        }catch (Exception e){
+            resEntity.setCode(ResCode.ERROR.getCode());
+            resEntity.setMessage(ResCode.ERROR.getMsg());
+            resEntity.setData("上传失败！"+e);
+        }
+        return resEntity;
+    }
+
+
+    /**
+     * 下载头像
+     * @param user
+     * @param fileName
+     * @return
+     */
+    @Override
+    public Resource downloadIcon(User user, String fileName) {
+        Resource resource = fileStorageService.loadFileAsResource(fileName,user,"Icon");
+        return resource;
     }
 }
