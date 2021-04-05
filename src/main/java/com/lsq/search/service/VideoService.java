@@ -3,7 +3,6 @@ package com.lsq.search.service;
 import com.lsq.search.entity.ResEntity;
 import com.lsq.search.entity.User;
 import com.lsq.search.entity.Video;
-import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -14,6 +13,8 @@ import org.springframework.web.multipart.MultipartFile;
  */
 
 public interface VideoService {
-    public ResEntity uploadVideo(Video video, MultipartFile file);
-    public Resource downloadVideo(User user, String fileName);
+    public String getVideoUrl(int id);
+    public ResEntity uploadVideo(Video video, MultipartFile file, User user);
+    public ResEntity setComment(Video video,User user,String comment);
+    public ResEntity likeUpdate(Video video,User user);
 }

@@ -11,6 +11,7 @@ import java.util.List;
 public interface UserMapper {
     List<User> getUserList();
     int insertUser(User user);
+    User getUserById(@Param("id") int id);
     User getUserByName(@Param("username") String username);
     int deleteUser(User user);
     int changePwd(@Param("username") String username,@Param("newpassword")String newpassword);

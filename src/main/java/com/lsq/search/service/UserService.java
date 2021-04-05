@@ -2,7 +2,6 @@ package com.lsq.search.service;
 
 import com.lsq.search.entity.ResEntity;
 import com.lsq.search.entity.User;
-import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -21,5 +20,5 @@ public interface UserService {
     public ResEntity deleteUser(User user);
     public ResEntity changeInfo(User user);
     public ResEntity uploadIcon(User user, MultipartFile file);
-    public Resource downloadIcon(User user, String fileName);
+    public String getIconUrl(int id);
 }

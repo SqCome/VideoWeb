@@ -116,21 +116,9 @@ public class UserContraller {
         return userService.uploadIcon(userUtil,file);
     }
 
-    /**
-     * 下载头像
-     * @param user
-     * @param request
-     * @return
-     */
-    @GetMapping("/getIcon")
-    public ResponseEntity<Resource> downloadIcon(@RequestBody User user, HttpServletRequest request){
-        userUtil = userMapper.getUserByName(user.getUsername());
-        System.out.println(userUtil.getTargetLocation());
-        Resource resource = userService.downloadIcon(userUtil,"Icon.jpg");
-        String contentType = downloadFile.getFileContentType(resource,request);
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(contentType))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
-                .body(resource);
-    }
+//    @RequestMapping("/getIconUrl")
+//    public ResEntity getIconUrl(@RequestBody User user){
+//        userUtil = userMapper.getUserByName(user.getUsername());
+//        return null;
+//    }
 }

@@ -11,7 +11,6 @@ import org.springframework.web.multipart.MultipartFile;
  * @Auth LSQ
  */
 public interface FileStorageService {
-
     public String storeFile(MultipartFile file,User user,String fileType);
-    public Resource loadFileAsResource(String fileName,User user,String fileType);
+    public Resource loadFileAsResource(String url);
 }

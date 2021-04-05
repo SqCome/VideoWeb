@@ -219,13 +219,10 @@ public class UserServiceImpl implements UserService {
     public ResEntity uploadIcon(User user, MultipartFile file) {
         ResEntity resEntity = new ResEntity();
         try {
-            String fileName = fileStorageService.storeFile(file,user,"Icon");
-            String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                    .path("/downloadFile/")
-                    .path(fileName)
-                    .toUriString();
-            user.setIcon(fileDownloadUri);
-            this.changeInfo(user);
+            checkUser.setUsername(user.getUsername());
+            String iconUrl = fileStorageService.storeFile(file,user,"Icon");
+            checkUser.setIcon(iconUrl);
+            this.changeInfo(checkUser);
             resEntity.setCode(ResCode.SUCCESS.getCode());
             resEntity.setMessage(ResCode.SUCCESS.getMsg());
             resEntity.setData("上传成功！");
@@ -237,16 +234,8 @@ public class UserServiceImpl implements UserService {
         return resEntity;
     }
 
-
-    /**
-     * 下载头像
-     * @param user
-     * @param fileName
-     * @return
-     */
     @Override
-    public Resource downloadIcon(User user, String fileName) {
-        Resource resource = fileStorageService.loadFileAsResource(fileName,user,"Icon");
-        return resource;
+    public String getIconUrl(int id) {
+        return userMapper.getUserById(id).getIcon();
     }
 }
