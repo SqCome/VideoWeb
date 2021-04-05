@@ -15,6 +15,25 @@
         <result property="showStatus" column="show_status"/>
      </resultMap>
 
+    <!--    级联查询中User和Video的信息-->
+    <resultMap id="getUserVideos" type="User">
+        <id column="user_id" property="id"></id>
+        <result column="username" property="username"/>
+        <collection property="videoList" ofType="Video">
+            <id column="video_id" property="id"></id>
+            <result property="url" column="url"/>
+            <result property="title" column="title"/>
+            <result property="reviewStatus" column="review_status"/>
+            <result property="showStatus" column="show_status"/>
+        </collection>
+    </resultMap>
+
+    <!--    查询用户的视频资源-->
+    <select id="getMyVideos" resultMap="getUserVideos">
+        select u.id as user_id,u.username as username,v.id as video_id,v.url,v.title,v.review_status,v.show_status
+        from user u left join video v on u.id = v.user_id
+        where u.id=#{id}
+    </select>
 
     <!--根据视频id来查询相应的视频资源    -->
     <select id="selectVideoById" resultMap="videoResultMap">
@@ -22,7 +41,6 @@
         from video
         where id = #{id}
     </select>
-
 
     <!--插入视频资源信息    -->
     <insert id="insertVideo" parameterType="Video" useGeneratedKeys="true" keyProperty="id">

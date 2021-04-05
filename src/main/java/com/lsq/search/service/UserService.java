@@ -21,4 +21,5 @@ public interface UserService {
     public ResEntity changeInfo(User user);
     public ResEntity uploadIcon(User user, MultipartFile file);
     public String getIconUrl(int id);
+    public ResEntity getUserVideoList(User user);
 }

@@ -14,28 +14,7 @@
         <result property="targetLocation" column="location_dir"/>
     </resultMap>
 
-<!--    <resultMap id="userVideoInfo" type="User">-->
-<!--        <id column="id" property="id"></id>-->
-<!--        <result column="username" property="username"/>-->
-<!--        <result column="icon" property="icon"/>-->
-<!--        <result column="location_dir" property="targetLocation"/>-->
-<!--    </resultMap>-->
 
-<!--    <resultMap id="videoVideoInfo" type="Video">-->
-<!--        <result property="url" column="url"/>-->
-<!--        <result property="title" column="title"/>-->
-<!--        <result property="reviewStatus" column="review_status"/>-->
-<!--        <result property="showStatus" column="show_status"/>-->
-<!--    </resultMap>-->
-
-<!--    <resultMap id="getUserVideos" type="User">-->
-<!--        <id column="id" property="id"></id>-->
-<!--        <result column="username" property="username"/>-->
-<!--        <result column="icon" property="icon"/>-->
-<!--        <result column="location_dir" property="targetLocation"/>-->
-<!--        <collection property="User"/>-->
-<!--    </resultMap>-->
-    
     <select id="getUserList" resultMap="userResultMap">
         select * from user;
     </select>
@@ -67,7 +46,7 @@
         where username = #{username}
     </update>
 
-    <!--更新除密码其他信息-->
+    <!--    更新除密码其他信息-->
     <update id="updateUser">
         update user
         <set>
@@ -83,7 +62,6 @@
         </set>
         where username = #{username}
     </update>
-
 
     <!--    用户注销-->
     <delete id="deleteUser">

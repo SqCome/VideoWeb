@@ -12,8 +12,6 @@ import com.lsq.search.utils.FileUtils.FileStorageProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import org.springframework.core.io.Resource;
 
 
 import java.nio.file.Files;
@@ -234,8 +232,18 @@ public class UserServiceImpl implements UserService {
         return resEntity;
     }
 
+    /**
+     * 得到头像的存储地址
+     * @param id
+     * @return
+     */
     @Override
     public String getIconUrl(int id) {
         return userMapper.getUserById(id).getIcon();
+    }
+
+    @Override
+    public ResEntity getUserVideoList(User user) {
+        return null;
     }
 }
